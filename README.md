@@ -18,8 +18,7 @@ CONNECTION LIMIT = -1
 IS_TEMPLATE = False;
 ```
 
-## Variáris de Ambiente
+## Variáveis de Ambiente
 Deve ser configurada as variáveis de ambiente para que a aplicação fucnione corretamente
 
-### Entradas
-DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
+Entradas: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
