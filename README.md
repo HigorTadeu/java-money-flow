@@ -21,4 +21,5 @@ IS_TEMPLATE = False;
 ## Variáveis de Ambiente
 Deve ser configurada as variáveis de ambiente para que a aplicação fucnione corretamente
 
-Entradas: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
+Entradas para Banco de Dados: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
+Entrada para ambiente: APP_PROFILE (dev, hom, prod)
