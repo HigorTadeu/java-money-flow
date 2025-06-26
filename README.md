@@ -41,6 +41,7 @@ Deve ser configurada as variáveis de ambiente para que a aplicação fucnione c
 
 Entradas para Banco de Dados: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
 Entrada para ambiente: APP_PROFILE (dev, hom, prod)
+Entrada de palavra usada para criar Token: JWT_SECRET
 
 ### Instruções de Uso
 1. Rodar aplicação 
@@ -69,6 +70,8 @@ git clone https://github.com/HigorTadeu/java-money-flow.git
 2. Install dependencies with Maven
 
 3. Install [PostgresSQL](https://www.postgresql.org/)
+
+4. Create enviriment variables
 
 ## Usage
 
