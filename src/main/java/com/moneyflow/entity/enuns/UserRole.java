@@ -1,4 +1,4 @@
-package com.moneyflow.entity;
+package com.moneyflow.entity.enuns;
 
 public enum UserRole {
     ADMIN("admin"),

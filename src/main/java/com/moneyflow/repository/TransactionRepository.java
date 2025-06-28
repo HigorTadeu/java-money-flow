@@ -1,6 +1,6 @@
 package com.moneyflow.repository;
 
-import com.moneyflow.model.Transaction;
+import com.moneyflow.entity.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
