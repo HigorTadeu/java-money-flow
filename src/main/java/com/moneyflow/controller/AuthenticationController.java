@@ -4,6 +4,8 @@ import com.moneyflow.dto.AuthenticationDTO;
 import com.moneyflow.dto.LoginResponseDTO;
 import com.moneyflow.dto.RegisterDTO;
 import com.moneyflow.entity.User;
+import com.moneyflow.entity.enuns.UserRole;
+import com.moneyflow.entity.enuns.UserStatus;
 import com.moneyflow.repository.UserRepository;
 import com.moneyflow.service.TokenService;
 import jakarta.validation.Valid;
@@ -43,7 +45,7 @@ public class AuthenticationController {
 
         //Cria a senha Encriptada
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
-        User newUser = new User(data.login(), encryptedPassword, data.role());
+        User newUser = new User(data.name(), data.email(), data.login(), encryptedPassword, data.role(), data.status());
 
         //Salva o usuário no banco
         this.repository.save(newUser);

@@ -26,35 +26,29 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    //@Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    //@Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String login;
 
-    //@Column(unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String email;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    //@Column(nullable = false)
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
     public User () { }
 
-    public User (String login, String password, UserRole role){
-        this.login = login;
-        this.password = password;
-        this.role = role;
-    }
-
-    public User(String name, String login, String email, String password, UserRole role, UserStatus status) {
+    public User(String name, String email, String login, String password, UserRole role, UserStatus status) {
         this.name = name;
         this.login = login;
         this.email = email;
