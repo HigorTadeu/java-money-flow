@@ -2,10 +2,8 @@ package com.moneyflow.controller;
 
 import com.moneyflow.dto.AuthenticationDTO;
 import com.moneyflow.dto.LoginResponseDTO;
-import com.moneyflow.dto.RegisterDTO;
+import com.moneyflow.dto.RegisterRequestDTO;
 import com.moneyflow.entity.User;
-import com.moneyflow.entity.enuns.UserRole;
-import com.moneyflow.entity.enuns.UserStatus;
 import com.moneyflow.repository.UserRepository;
 import com.moneyflow.service.TokenService;
 import jakarta.validation.Valid;
@@ -40,7 +38,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody @Valid RegisterDTO data){
+    public ResponseEntity register(@RequestBody @Valid RegisterRequestDTO data){
         if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
         //Cria a senha Encriptada
