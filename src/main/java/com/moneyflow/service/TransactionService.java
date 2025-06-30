@@ -1,7 +1,7 @@
 package com.moneyflow.service;
 
 import com.moneyflow.dto.TransactionDTO;
-import com.moneyflow.model.Transaction;
+import com.moneyflow.entity.Transaction;
 import com.moneyflow.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -40,12 +40,15 @@ IS_TEMPLATE = False;
 Deve ser configurada as variáveis de ambiente para que a aplicação fucnione corretamente
 
 Entradas para Banco de Dados: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
-Entrada para ambiente: APP_PROFILE (dev, hom, prod)
+
+Entrada para ambiente: APP_PROFILE com as opções (dev, hom, prod) representando cada ambeinte da aplicação
+
+Entrada de palavra usada para criar Token: JWT_SECRET
 
 ### Instruções de Uso
 1. Rodar aplicação 
 2. Efetuar login através do endpoint /auth/login
-   * O usuário inicial com permissões ADMIN é usuário admin senha Admin#321
+   * O usuário inicial com permissões ADMIN é usuário **admin** senha **Admin#321**
 3. Com o toquem retornado deverá chamar os endpoints desejados
 
 ## Table of Contents
@@ -69,6 +72,8 @@ git clone https://github.com/HigorTadeu/java-money-flow.git
 2. Install dependencies with Maven
 
 3. Install [PostgresSQL](https://www.postgresql.org/)
+
+4. Create enviriment variables
 
 ## Usage
 
