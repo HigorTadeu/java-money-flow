@@ -1,4 +1,4 @@
-INSERT INTO users (id, name, email, login, password, status, role) VALUES (gen_random_uuid(), 'Administrator', 'admin@email.com', 'admin', '$2a$10$0ZsUqNeGESujxCsNZaG60.0uQTpyDHqyGozEUOwc4zjvadS5lqJyu','ACTIVE','ADMIN')
+INSERT INTO users (id, name, email, login, password, status, role) VALUES (gen_random_uuid(), 'Administrator', 'admin@email.com', 'admin', '$2a$10$WG9kEmAUsx9cTIBmdEynVOXthtZ/VmFTNubCutii5foQDoRAkq3eS','ACTIVE','ADMIN')
 
 INSERT INTO transactions (description, amount, transaction_date, type, category, observation) VALUES ('Salário mensal', 4500.00, '2024-01-05', 'INCOME', 'OTHER', 'Pagamento salário Janeiro');
 INSERT INTO transactions (description, amount, transaction_date, type, category, observation) VALUES ('Supermercado Extra', 156.78, '2024-01-07', 'EXPENSE', 'FOOD', 'Compras da semana');
