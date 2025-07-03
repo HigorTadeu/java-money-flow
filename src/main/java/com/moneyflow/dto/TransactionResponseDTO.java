@@ -1,48 +1,50 @@
-package com.moneyflow.entity;
+package com.moneyflow.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.moneyflow.entity.Transaction;
 import com.moneyflow.entity.enuns.CategoryExpense;
 import com.moneyflow.entity.enuns.CategoryIncome;
 import com.moneyflow.entity.enuns.TransactionType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Entity
-@Table(name = "transactions")
-public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+public class TransactionResponseDTO {
+
     private UUID id;
-
-    @Column(nullable = false)
     private String description;
-
-    @Column(nullable = false)
     private BigDecimal amount;
-
-    @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate transactionDate;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private TransactionType type;
-
-    @Enumerated(EnumType.STRING)
     private CategoryIncome categoryIncome;
-
-    @Enumerated(EnumType.STRING)
     private CategoryExpense categoryExpense;
-
     private String observation;
+
+    public TransactionResponseDTO() { }
+
+    public TransactionResponseDTO(UUID id, String description, BigDecimal amount, LocalDate transactionDate, TransactionType type, CategoryIncome categoryIncome, CategoryExpense categoryExpense, String observation) {
+        this.id = id;
+        this.description = description;
+        this.amount = amount;
+        this.transactionDate = transactionDate;
+        this.type = type;
+        this.categoryIncome = categoryIncome;
+        this.categoryExpense = categoryExpense;
+        this.observation = observation;
+    }
+
+    public TransactionResponseDTO(Transaction transaction){
+        this.id = transaction.getId();
+        this.description = transaction.getDescription();
+        this.amount = transaction.getAmount();
+        this.transactionDate = transaction.getTransactionDate();
+        this.type = transaction.getType();
+        this.categoryIncome = transaction.getCategoryIncome();
+        this.categoryExpense = transaction.getCategoryExpense();
+        this.observation = transaction.getObservation();
+    }
 
     public UUID getId() {
         return id;
@@ -84,14 +86,6 @@ public class Transaction {
         this.type = type;
     }
 
-    public String getObservation() {
-        return observation;
-    }
-
-    public void setObservation(String observation) {
-        this.observation = observation;
-    }
-
     public CategoryIncome getCategoryIncome() {
         return categoryIncome;
     }
@@ -106,5 +100,13 @@ public class Transaction {
 
     public void setCategoryExpense(CategoryExpense categoryExpense) {
         this.categoryExpense = categoryExpense;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 }

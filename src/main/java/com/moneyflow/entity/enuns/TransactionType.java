@@ -1,4 +1,4 @@
-package com.moneyflow.model;
+package com.moneyflow.entity.enuns;
 
 public enum TransactionType {
     INCOME,

@@ -1,5 +1,6 @@
 package com.moneyflow.model;
 
+import com.moneyflow.entity.enuns.TransactionType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -28,11 +29,6 @@ public class Transactions {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType type;
-
-    @NotNull(message = "Category is required")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private TransactionCategory category;
 
     private String observation;
 
@@ -74,14 +70,6 @@ public class Transactions {
 
     public void setType(TransactionType type) {
         this.type = type;
-    }
-
-    public TransactionCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(TransactionCategory category) {
-        this.category = category;
     }
 
     public String getObservation() {

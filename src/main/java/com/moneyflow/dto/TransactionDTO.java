@@ -1,16 +1,20 @@
 package com.moneyflow.dto;
 
-import com.moneyflow.model.TransactionCategory;
-import com.moneyflow.model.TransactionType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.moneyflow.entity.enuns.CategoryExpense;
+import com.moneyflow.entity.enuns.CategoryIncome;
+import com.moneyflow.entity.enuns.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
-public record TransactionDTO(Long id,
+public record TransactionDTO(UUID id,
                              String description,
                              BigDecimal amount,
-                             LocalDate transaction_date,
+                             @JsonFormat(pattern = "yyyy-MM-dd") LocalDate transactionDate,
                              TransactionType type,
-                             TransactionCategory category,
+                             CategoryIncome categoryIncome,
+                             CategoryExpense categoryExpense,
                              String observation
 ) {}
