@@ -1,10 +1,11 @@
 package com.moneyflow.controller;
 
-import com.moneyflow.dto.TransactionDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,15 +24,16 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @GetMapping
-    public List<TransactionDTO> getAllTransactions(){
-        return transactionService.getAllTransactions();
-    }
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<TransactionResponseDTO> findById(@PathVariable UUID id){
         TransactionResponseDTO response = transactionService.findById(id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<TransactionResponseDTO>> findAll(Pageable pageable){
+        Page<TransactionResponseDTO> transactions = transactionService.findAll(pageable);
+        return ResponseEntity.ok(transactions);
     }
 
     @PostMapping

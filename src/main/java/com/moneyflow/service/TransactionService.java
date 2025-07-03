@@ -7,6 +7,8 @@ import com.moneyflow.entity.Transaction;
 import com.moneyflow.repository.TransactionRepository;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,6 +47,11 @@ public class TransactionService {
         Transaction transaction = result.orElseThrow(() -> new ResourceNotFoundException("Transaction not found with id: " + id));
 
         return new TransactionResponseDTO(transaction);
+    }
+    @Transactional(readOnly = true)
+    public Page<TransactionResponseDTO> findAll(Pageable pageable) {
+       Page<Transaction> transactions = transactionRepository.findAll(pageable);
+       return transactions.map(t -> new TransactionResponseDTO(t));
     }
 
 //    private void validateTransaction(Transaction transaction) {
