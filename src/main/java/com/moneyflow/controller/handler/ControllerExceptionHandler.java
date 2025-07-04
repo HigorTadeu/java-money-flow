@@ -1,11 +1,15 @@
 package com.moneyflow.controller.handler;
 
+import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.moneyflow.dto.error.CustomError;
+import com.moneyflow.dto.error.ValidationError;
 import com.moneyflow.service.exception.JWTCreationException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -29,8 +33,28 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<CustomError> illegalArgument(IllegalArgumentException exception, HttpServletRequest request){
-        HttpStatus status= HttpStatus.CONFLICT;
+        HttpStatus status = HttpStatus.CONFLICT;
         CustomError error = new CustomError(Instant.now(), status.value(), exception.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<CustomError> tokenExpired(TokenExpiredException exception, HttpServletRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomError error = new CustomError(Instant.now(), status.value(), exception.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<CustomError> argumentNotValid(MethodArgumentNotValidException exception, HttpServletRequest request){
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        ValidationError error = new ValidationError(Instant.now(), status.value(), "Daods inválidos", request.getRequestURI());
+
+        for(FieldError fieldError : exception.getBindingResult().getFieldErrors()){
+            error.addErrors(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+
         return ResponseEntity.status(status).body(error);
     }
 

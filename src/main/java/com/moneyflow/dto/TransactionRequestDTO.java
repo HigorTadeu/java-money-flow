@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.moneyflow.entity.enuns.CategoryExpense;
 import com.moneyflow.entity.enuns.CategoryIncome;
 import com.moneyflow.entity.enuns.TransactionType;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,10 +13,15 @@ import java.util.UUID;
 
 public class TransactionRequestDTO {
     private UUID id;
+    @NotNull(message = "Description is required")
     private String description;
+    @NotNull(message = "Amount is required")
+    @Positive(message = "Value must be greater than zero")
     private BigDecimal amount;
+    @NotNull(message = "Transaction date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate transactionDate;
+    @NotNull(message = "Type of transaction is required")
     private TransactionType type;
     private CategoryIncome categoryIncome;
     private CategoryExpense categoryExpense;
