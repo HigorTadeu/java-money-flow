@@ -5,6 +5,7 @@ import com.moneyflow.dto.error.CustomError;
 import com.moneyflow.dto.error.ValidationError;
 import com.moneyflow.service.exception.JWTCreationException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
+import com.moneyflow.service.exception.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,13 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<CustomError> resourceNotFound(ResourceNotFoundException exception, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
+        CustomError error = new CustomError(Instant.now(), status.value(), exception.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<CustomError> validation(ValidationException exception, HttpServletRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         CustomError error = new CustomError(Instant.now(), status.value(), exception.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(error);
     }
