@@ -5,9 +5,11 @@ import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.entity.Transaction;
 import com.moneyflow.entity.enuns.TransactionType;
 import com.moneyflow.repository.TransactionRepository;
+import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import com.moneyflow.service.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -85,4 +87,15 @@ public class TransactionService {
         return transaction;
     }
 
+    public void delete(UUID id) {
+        if(!transactionRepository.findById(id).isPresent()){
+            throw new ResourceNotFoundException("Transação não localizada!");
+        }
+        try{
+            transactionRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException("Falha na integridade referencial");
+        }
+
+    }
 }

@@ -3,6 +3,7 @@ package com.moneyflow.controller.handler;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.moneyflow.dto.error.CustomError;
 import com.moneyflow.dto.error.ValidationError;
+import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.JWTCreationException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import com.moneyflow.service.exception.ValidationException;
@@ -64,6 +65,13 @@ public class ControllerExceptionHandler {
         }
 
         return ResponseEntity.status(status).body(error);
+    }
+
+    @ExceptionHandler(DatabaseException.class)
+    public ResponseEntity<CustomError> databaseException(DatabaseException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
     }
 
 //    @ExceptionHandler(IllegalArgumentException.class)
