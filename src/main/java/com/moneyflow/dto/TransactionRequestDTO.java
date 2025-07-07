@@ -1,42 +1,39 @@
-package com.moneyflow.model;
+package com.moneyflow.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.moneyflow.entity.enuns.CategoryExpense;
+import com.moneyflow.entity.enuns.CategoryIncome;
 import com.moneyflow.entity.enuns.TransactionType;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-public class Transactions {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+import java.util.UUID;
 
+public class TransactionRequestDTO {
+    private UUID id;
     @NotNull(message = "Description is required")
-    @Column(nullable = false)
     private String description;
-
     @NotNull(message = "Amount is required")
     @Positive(message = "Value must be greater than zero")
-    @Column(nullable = false)
     private BigDecimal amount;
-
     @NotNull(message = "Transaction date is required")
-    @Column(nullable = false)
-    private LocalDate transaction_date;
-
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate transactionDate;
     @NotNull(message = "Type of transaction is required")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private TransactionType type;
-
+    private CategoryIncome categoryIncome;
+    private CategoryExpense categoryExpense;
     private String observation;
 
-    public Long getId() {
+    public TransactionRequestDTO() { }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -56,12 +53,12 @@ public class Transactions {
         this.amount = amount;
     }
 
-    public LocalDate getTransaction_date() {
-        return transaction_date;
+    public LocalDate getTransactionDate() {
+        return transactionDate;
     }
 
-    public void setTransaction_date(LocalDate transaction_date) {
-        this.transaction_date = transaction_date;
+    public void setTransactionDate(LocalDate transactionDate) {
+        this.transactionDate = transactionDate;
     }
 
     public TransactionType getType() {
@@ -70,6 +67,22 @@ public class Transactions {
 
     public void setType(TransactionType type) {
         this.type = type;
+    }
+
+    public CategoryIncome getCategoryIncome() {
+        return categoryIncome;
+    }
+
+    public void setCategoryIncome(CategoryIncome categoryIncome) {
+        this.categoryIncome = categoryIncome;
+    }
+
+    public CategoryExpense getCategoryExpense() {
+        return categoryExpense;
+    }
+
+    public void setCategoryExpense(CategoryExpense categoryExpense) {
+        this.categoryExpense = categoryExpense;
     }
 
     public String getObservation() {

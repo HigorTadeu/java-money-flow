@@ -5,24 +5,85 @@
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 
-Money Flow é uma aplicação Backend simples para lançamento de transações finaceiras pessoais ou da família.
+## Sumário
 
-O projeto foi construído em **Java, Java Spring, banco de dados PostgresSQL, Spring Security e JWT para controle de autenticação**.
+- [Descrição](#descricao)
+- [Pré-requisitos](#pré-requisitos)
+- [Instalação](#instalação)
+- [Instruções de uso](#instruções-de-uso)
+- [API Endpoints](#api-endpoints)
+- [Autenticação](#autenticação)
+- [Banco de Dados](#banco-de-dados)
+- [Contribuição](#contribuições)
 
-Aplicação feita para estudo e aprimorar conhecimentos além de atender uma necessidade pessoal não usando mais planilihas.
+## Descrição 
+Money Flow é uma aplicação Backend para gestão financeira pessoal ou familiar.
 
-# Definições Técnicas
-## Instruções de Instalação
+O projeto foi construído com a linguagem **Java**, framework **Spring**, banco de dados **PostgresSQL**, **Spring Security** e **JWT** para controle de autenticação.
 
-### Pré-requisitos
+## Pré-requisitos
 * Java 21
-* Bande dados PostgreSQL - 
+* Bande dados PostgreSQL 16.9
+* Spring Boot 3.4.4
+
+## Instalação
+
+1. Clonar o repositório:
+
+```bash
+git clone https://github.com/HigorTadeu/java-money-flow.git
+```
+
+2. Instalar dependência utilizando o Maven
+
+3. Instalar o banco de dados [PostgresSQL](https://www.postgresql.org/)
+
+4. Criar as variáveis de ambiente
+
+### Variáveis de Ambiente
+Entradas para Banco de Dados: **DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS**
+
+Entrada para ambiente: **APP_PROFILE** com as opções (dev, hom, prod) representando cada ambeinte da aplicação
+
+Entrada para criação do Token: **JWT_SECRET**
+
+## Instruções de Uso
+1. Executar aplicação com o Maven
+2. A API é acessada através http://localhost:8080
+
+## API Endpoints
+A API fornece os seguintes endpoints:
+
+```markdown
+GET /transactions - Recupera uma lista de todas as transações. (todos os usuários autenticados).
+
+GET /transactions/{id} - Recupera uma transação com base no ID. (todos os usuários autenticados).
+
+POST /transactions - Cadastra uma nova transação. (todos os usuários autenticados) (todos os usuários autenticados).
+
+PUT /transactions/{id} - Atualiza uma transação. (todos os usuários autenticados) (todos os usuários autenticados).
+
+DELETE /transactions/{id} - Exclui uma transação. (todos os usuários autenticados).
+
+POST /auth/login - Realiza login no App
+```
+
+## Autenticação
+A API utiliza o Spring Security para controle de autenticação. As seguintes permissões (roles) estão disponíveis:
+```bash
+USER -> Papel padrão para usuários autenticados.
+ADMIN -> Papel de administrador para gerenciamento de parceiros (cadastro de novos parceiros).
+```
+Endpoint para login /auth/login
+* Usuário inicial com permissões **ADMIN** é usuário **admin** senha **Admin#321**
+
+Com o Token retornado deve acessar os endpoints desejados.
 
 ## Banco de Dados
 * PostgreSQL
 * Base: money_flow
 * Usuário: postgres
-* Senha: Acesso123
+* Senha: postgres
 * Encoding: UTF8
 
 DDL:
@@ -35,22 +96,15 @@ LOCALE_PROVIDER = 'libc'
 CONNECTION LIMIT = -1
 IS_TEMPLATE = False;
 ```
+## Contribuições
+Contribuições são bem-vindas!
+Se você encontrar algum problema ou tiver sugestões de melhorias, abra uma issue ou envie um pull request para o repositório.
 
-## Variáveis de Ambiente
-Deve ser configurada as variáveis de ambiente para que a aplicação fucnione corretamente
+Ao contribuir com este projeto, por favor, siga o estilo de código existente, as convenções de commit e envie suas alterações em uma branch separada.
 
-Entradas para Banco de Dados: DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS
+---
 
-Entrada para ambiente: APP_PROFILE com as opções (dev, hom, prod) representando cada ambeinte da aplicação
-
-Entrada de palavra usada para criar Token: JWT_SECRET
-
-### Instruções de Uso
-1. Rodar aplicação 
-2. Efetuar login através do endpoint /auth/login
-   * O usuário inicial com permissões ADMIN é usuário **admin** senha **Admin#321**
-3. Com o toquem retornado deverá chamar os endpoints desejados
-
+---
 ## Table of Contents
 
 - [Installation](#installation)
@@ -91,13 +145,11 @@ GET /transactions/{id} - Retrieve a transaction based ID. (all authenticated use
 
 POST /transactions - Register a new transaction (all authenticated users).(ADMIN access required).
 
-PUT /transactions - Update a transaction (all authenticated users).(ADMIN access required).
+PUT /transactions/{id} - Update a transaction (all authenticated users).(ADMIN access required).
 
-DELETE /transactions - Delete a transaction (all authenticated users).
+DELETE /transactions/{id} - Delete a transaction (all authenticated users).
 
 POST /auth/login - Login into the App
-
-POST /auth/register - Register a new user into the App
 ```
 
 ## Authentication
@@ -107,7 +159,10 @@ The API uses Spring Security for authentication control. The following roles are
 USER -> Standard user role for logged-in users.
 ADMIN -> Admin role for managing partners (registering new partners).
 ```
-To access protected endpoints as an ADMIN user, provide the appropriate authentication credentials in the request header.
+Login endpoint: /auth/login
+* The initial user with ADMIN permissions is username admin, password Admin#321.
+
+Use the returned token to access the desired endpoints.
 
 ## Database
 The project utilizes [PostgresSQL](https://www.postgresql.org/) as the database. The necessary database migrations are managed using Flyway.

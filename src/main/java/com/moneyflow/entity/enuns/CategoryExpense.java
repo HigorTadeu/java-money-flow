@@ -1,6 +1,6 @@
-package com.moneyflow.model;
+package com.moneyflow.entity.enuns;
 
-public enum TransactionCategory {
+public enum CategoryExpense {
     FOOD,
     TRANSPORT,
     HOME,
