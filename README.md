@@ -129,6 +129,13 @@ git clone https://github.com/HigorTadeu/java-money-flow.git
 
 4. Create enviriment variables
 
+### Environment Variables
+Database Inputs: **DB_HOST, DB_PORT, DB_BASE, DB_USER, DB_PASS**
+
+Environment Input: **APP_PROFILE** with options (dev, hom, prod) representing each application environment
+
+Token Creation Input: **JWT_SECRET**
+
 ## Usage
 
 1. Start the application with Maven
