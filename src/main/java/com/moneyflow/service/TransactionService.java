@@ -80,8 +80,17 @@ public class TransactionService {
         if(dto.getAmount() != null) transaction.setAmount(dto.getAmount());
         if(dto.getTransactionDate() != null) transaction.setTransactionDate(dto.getTransactionDate());
         if(dto.getType() != null) transaction.setType(dto.getType());
-        if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
-        if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
+
+        if(dto.getType() == TransactionType.EXPENSE)
+            transaction.setCategoryIncome(null);
+        else
+            if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
+
+        if(dto.getType() == TransactionType.INCOME)
+            transaction.setCategoryExpense(null);
+        else
+            if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
+
         if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
 
         return transaction;

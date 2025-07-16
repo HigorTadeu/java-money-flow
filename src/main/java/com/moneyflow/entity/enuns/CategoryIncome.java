@@ -5,5 +5,6 @@ public enum CategoryIncome {
     OTHER, //outros tipos de receita
     RENTAL,// aluguel
     GIFTS, // presente em dinheiro
+    INVESTMENT, // investimento
     INTEREST; // juros de investimentos
 }

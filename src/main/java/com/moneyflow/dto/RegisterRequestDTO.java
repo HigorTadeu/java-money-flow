@@ -2,7 +2,6 @@ package com.moneyflow.dto;
 
 import com.moneyflow.entity.enuns.UserRole;
 import com.moneyflow.entity.enuns.UserStatus;
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
