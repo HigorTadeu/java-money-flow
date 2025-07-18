@@ -10,10 +10,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -43,6 +46,11 @@ public class Transaction {
     private CategoryExpense categoryExpense;
 
     private String observation;
+
+    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "wallet_id")
+    private Wallet wallet;
 
     public UUID getId() {
         return id;
@@ -106,5 +114,13 @@ public class Transaction {
 
     public void setCategoryExpense(CategoryExpense categoryExpense) {
         this.categoryExpense = categoryExpense;
+    }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
     }
 }
