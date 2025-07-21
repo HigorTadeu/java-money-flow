@@ -21,10 +21,11 @@ public class TransactionResponseDTO {
     private CategoryIncome categoryIncome;
     private CategoryExpense categoryExpense;
     private String observation;
+    private WalletDTO wallet;
 
     public TransactionResponseDTO() { }
 
-    public TransactionResponseDTO(UUID id, String description, BigDecimal amount, LocalDate transactionDate, TransactionType type, CategoryIncome categoryIncome, CategoryExpense categoryExpense, String observation) {
+    public TransactionResponseDTO(UUID id, String description, BigDecimal amount, LocalDate transactionDate, TransactionType type, CategoryIncome categoryIncome, CategoryExpense categoryExpense, String observation, WalletDTO wallet) {
         this.id = id;
         this.description = description;
         this.amount = amount;
@@ -33,17 +34,19 @@ public class TransactionResponseDTO {
         this.categoryIncome = categoryIncome;
         this.categoryExpense = categoryExpense;
         this.observation = observation;
+        this.wallet = wallet;
     }
 
     public TransactionResponseDTO(Transaction transaction){
-        this.id = transaction.getId();
-        this.description = transaction.getDescription();
-        this.amount = transaction.getAmount();
-        this.transactionDate = transaction.getTransactionDate();
-        this.type = transaction.getType();
-        this.categoryIncome = transaction.getCategoryIncome();
-        this.categoryExpense = transaction.getCategoryExpense();
-        this.observation = transaction.getObservation();
+        id = transaction.getId();
+        description = transaction.getDescription();
+        amount = transaction.getAmount();
+        transactionDate = transaction.getTransactionDate();
+        type = transaction.getType();
+        categoryIncome = transaction.getCategoryIncome();
+        categoryExpense = transaction.getCategoryExpense();
+        observation = transaction.getObservation();
+        wallet = new WalletDTO(transaction.getWallet());
     }
 
     public UUID getId() {
@@ -108,5 +111,13 @@ public class TransactionResponseDTO {
 
     public void setObservation(String observation) {
         this.observation = observation;
+    }
+
+    public WalletDTO getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(WalletDTO wallet) {
+        this.wallet = wallet;
     }
 }

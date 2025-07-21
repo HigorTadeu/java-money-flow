@@ -45,8 +45,7 @@ build/
 *.log
 
 # Arquivos de configuração com credenciais
-/src/main/resources/application-dev.properties
-/src/main/resources/application-prod.properties
+/src/main/resources/application-*
 *.properties.local
 *.yml.local
 .env

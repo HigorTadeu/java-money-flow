@@ -3,8 +3,10 @@ package com.moneyflow.service;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.entity.Transaction;
+import com.moneyflow.entity.Wallet;
 import com.moneyflow.entity.enuns.TransactionType;
 import com.moneyflow.repository.TransactionRepository;
+import com.moneyflow.repository.WalletRepository;
 import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import com.moneyflow.service.exception.ValidationException;
@@ -24,6 +26,9 @@ public class TransactionService {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private WalletRepository walletRepository;
+
     @Transactional
     public TransactionResponseDTO insert(TransactionRequestDTO dto) {
         Transaction transaction = new Transaction();
@@ -34,6 +39,9 @@ public class TransactionService {
         transaction.setCategoryIncome(dto.getCategoryIncome());
         transaction.setCategoryExpense(dto.getCategoryExpense());
         transaction.setObservation(dto.getObservation());
+
+        Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
+        transaction.setWallet(wallet);
 
         transaction = transactionRepository.save(transaction);
         return new TransactionResponseDTO(transaction);
@@ -75,27 +83,7 @@ public class TransactionService {
         return new TransactionResponseDTO(transactionUpdated);
     }
 
-    private Transaction updateEntityFromDTO(Transaction transaction, TransactionRequestDTO dto) {
-        if(dto.getDescription() != null) transaction.setDescription(dto.getDescription());
-        if(dto.getAmount() != null) transaction.setAmount(dto.getAmount());
-        if(dto.getTransactionDate() != null) transaction.setTransactionDate(dto.getTransactionDate());
-        if(dto.getType() != null) transaction.setType(dto.getType());
-
-        if(dto.getType() == TransactionType.EXPENSE)
-            transaction.setCategoryIncome(null);
-        else
-            if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
-
-        if(dto.getType() == TransactionType.INCOME)
-            transaction.setCategoryExpense(null);
-        else
-            if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
-
-        if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
-
-        return transaction;
-    }
-
+    @Transactional
     public void delete(UUID id) {
         if(!transactionRepository.findById(id).isPresent()){
             throw new ResourceNotFoundException("Transação não localizada!");
@@ -106,5 +94,26 @@ public class TransactionService {
             throw new DatabaseException("Falha na integridade referencial");
         }
 
+    }
+
+    private Transaction updateEntityFromDTO(Transaction transaction, TransactionRequestDTO dto) {
+        if(dto.getDescription() != null) transaction.setDescription(dto.getDescription());
+        if(dto.getAmount() != null) transaction.setAmount(dto.getAmount());
+        if(dto.getTransactionDate() != null) transaction.setTransactionDate(dto.getTransactionDate());
+        if(dto.getType() != null) transaction.setType(dto.getType());
+
+        if(dto.getType() == TransactionType.EXPENSE)
+            transaction.setCategoryIncome(null);
+        else
+        if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
+
+        if(dto.getType() == TransactionType.INCOME)
+            transaction.setCategoryExpense(null);
+        else
+        if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
+
+        if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
+
+        return transaction;
     }
 }

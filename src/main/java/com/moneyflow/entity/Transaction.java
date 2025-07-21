@@ -16,7 +16,6 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -47,9 +46,8 @@ public class Transaction {
 
     private String observation;
 
-    @Column(nullable = false)
     @ManyToOne
-    @JoinColumn(name = "wallet_id")
+    @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
     public UUID getId() {
