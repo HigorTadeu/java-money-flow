@@ -7,6 +7,7 @@ import com.moneyflow.entity.enuns.TransactionType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,6 +27,7 @@ public class TransactionRequestDTO {
     private TransactionType type;
     private CategoryIncome categoryIncome;
     private CategoryExpense categoryExpense;
+    @Size(max = 255, message = "Max length 255 characters")
     private String observation;
     @NotBlank(message = "Wallet is required")
     private UUID walletId;
