@@ -40,6 +40,9 @@ public class TransactionService {
         transaction.setCategoryExpense(dto.getCategoryExpense());
         transaction.setObservation(dto.getObservation());
 
+        if(!walletRepository.existsById(dto.getWalletId()))
+            throw new ResourceNotFoundException("Cartão com ID " +dto.getWalletId() + " não localizado!");
+
         Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
         transaction.setWallet(wallet);
 

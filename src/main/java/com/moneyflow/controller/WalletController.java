@@ -1,9 +1,11 @@
 package com.moneyflow.controller;
 
-import com.moneyflow.dto.TransactionRequestDTO;
-import com.moneyflow.dto.TransactionResponseDTO;
-import com.moneyflow.service.TransactionService;
+import com.moneyflow.dto.WalletRequestDTO;
+import com.moneyflow.dto.WalletResponseDTO;
+import com.moneyflow.repository.WalletRepository;
+import com.moneyflow.service.WalletService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,43 +24,45 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("transactions")
-public class TransactionController {
+@RequestMapping("wallets")
+public class WalletController {
+
     @Autowired
-    private TransactionService transactionService;
+    private WalletService walletService;
+    @Autowired
+    private WalletRepository walletRepository;
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TransactionResponseDTO> findById(@PathVariable UUID id){
-        TransactionResponseDTO response = transactionService.findById(id);
+    public ResponseEntity<WalletResponseDTO> findById(@PathVariable UUID id){
+        WalletResponseDTO response = walletService.findById(id);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping
-    public ResponseEntity<Page<TransactionResponseDTO>> findAll(Pageable pageable){
-        Page<TransactionResponseDTO> transactions = transactionService.findAll(pageable);
-        return ResponseEntity.ok(transactions);
+    public ResponseEntity<Page<WalletResponseDTO>> findAll(Pageable pageable){
+        Page<WalletResponseDTO> response = walletService.findAll(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<TransactionResponseDTO> insert(@RequestBody TransactionRequestDTO transactionRequestDTO){
-        TransactionResponseDTO transactionResponseDTO = transactionService.insert(transactionRequestDTO);
+    public ResponseEntity<WalletResponseDTO> insert(@RequestBody @Valid WalletRequestDTO dto){
+        WalletResponseDTO responseDTO = walletService.insert(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(transactionResponseDTO.getId())
+                .buildAndExpand(responseDTO.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(transactionResponseDTO);
+        return ResponseEntity.created(uri).body(responseDTO);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<TransactionResponseDTO> update(@PathVariable UUID id, @Valid @RequestBody TransactionRequestDTO transactionRequestDTO){
-        TransactionResponseDTO transactionResponseDTO = transactionService.update(id, transactionRequestDTO);
-        return ResponseEntity.ok(transactionResponseDTO);
+    public ResponseEntity<WalletResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid WalletRequestDTO dto){
+        return ResponseEntity.ok(walletService.update(id, dto));
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id){
-        transactionService.delete(id);
+        walletService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

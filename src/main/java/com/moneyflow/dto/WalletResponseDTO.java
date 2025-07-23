@@ -1,5 +1,7 @@
 package com.moneyflow.dto;
 
+import com.moneyflow.entity.Wallet;
+
 import java.util.UUID;
 
 public class WalletResponseDTO {
@@ -15,6 +17,13 @@ public class WalletResponseDTO {
         this.name = name;
         this.description = description;
         this.active = active;
+    }
+
+    public WalletResponseDTO(Wallet wallet) {
+        id = wallet.getId();
+        name = wallet.getName();
+        description = wallet.getDescription();
+        active = wallet.getActive();
     }
 
     public UUID getId() {
