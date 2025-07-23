@@ -4,9 +4,10 @@ import com.moneyflow.dto.WalletRequestDTO;
 import com.moneyflow.dto.WalletResponseDTO;
 import com.moneyflow.entity.Wallet;
 import com.moneyflow.repository.WalletRepository;
+import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -62,9 +63,14 @@ public class WalletService {
 
     public void delete(UUID id){
         Optional<Wallet> result = walletRepository.findById(id);
-        if(result.isPresent())
-            walletRepository.deleteById(id);
-        else
+        if(!result.isPresent()){
             throw new ResourceNotFoundException("Carteira não localizada: "+id);
+        }
+
+        try{
+            walletRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e){
+            throw new DatabaseException("Falha na integridade referencial");
+        }
     }
 }
