@@ -30,6 +30,10 @@ public class TransactionRequestDTO {
     private String observation;
     @NotNull(message = "Wallet is required")
     private UUID walletId;
+    @NotNull(message = "É obrigatório informar se foi Realizado ou Não")
+    private Boolean isRealized;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate realizedDate;
 
     public TransactionRequestDTO() { }
 
@@ -103,5 +107,21 @@ public class TransactionRequestDTO {
 
     public void setWalletId(UUID walletId) {
         this.walletId = walletId;
+    }
+
+    public Boolean getIsRealized() {
+        return isRealized;
+    }
+
+    public void setIsRealized(Boolean realized) {
+        isRealized = realized;
+    }
+
+    public LocalDate getRealizedDate() {
+        return realizedDate;
+    }
+
+    public void setRealizedDate(LocalDate realizedDate) {
+        this.realizedDate = realizedDate;
     }
 }

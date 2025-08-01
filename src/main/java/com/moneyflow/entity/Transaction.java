@@ -50,6 +50,11 @@ public class Transaction {
     @JoinColumn(name = "wallet_id", nullable = false)
     private Wallet wallet;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isRealized = false;
+
+    private LocalDate realizedDate;
+
     public UUID getId() {
         return id;
     }
@@ -120,5 +125,21 @@ public class Transaction {
 
     public void setWallet(Wallet wallet) {
         this.wallet = wallet;
+    }
+
+    public Boolean getIsRealized() {
+        return isRealized;
+    }
+
+    public void setIsRealized(Boolean realized) {
+        isRealized = realized;
+    }
+
+    public LocalDate getRealizedDate() {
+        return realizedDate;
+    }
+
+    public void setRealizedDate(LocalDate realizedDate) {
+        this.realizedDate = realizedDate;
     }
 }

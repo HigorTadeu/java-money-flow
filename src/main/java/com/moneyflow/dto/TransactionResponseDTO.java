@@ -22,10 +22,13 @@ public class TransactionResponseDTO {
     private CategoryExpense categoryExpense;
     private String observation;
     private WalletDTO wallet;
+    private Boolean isRealized;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate realizedDate;
 
     public TransactionResponseDTO() { }
 
-    public TransactionResponseDTO(UUID id, String description, BigDecimal amount, LocalDate transactionDate, TransactionType type, CategoryIncome categoryIncome, CategoryExpense categoryExpense, String observation, WalletDTO wallet) {
+    public TransactionResponseDTO(UUID id, String description, BigDecimal amount, LocalDate transactionDate, TransactionType type, CategoryIncome categoryIncome, CategoryExpense categoryExpense, String observation, WalletDTO wallet, Boolean isRealized, LocalDate realizedDate) {
         this.id = id;
         this.description = description;
         this.amount = amount;
@@ -35,6 +38,8 @@ public class TransactionResponseDTO {
         this.categoryExpense = categoryExpense;
         this.observation = observation;
         this.wallet = wallet;
+        this.isRealized = isRealized;
+        this.realizedDate = realizedDate;
     }
 
     public TransactionResponseDTO(Transaction transaction){
@@ -47,6 +52,8 @@ public class TransactionResponseDTO {
         categoryExpense = transaction.getCategoryExpense();
         observation = transaction.getObservation();
         wallet = new WalletDTO(transaction.getWallet());
+        isRealized = transaction.getIsRealized();
+        realizedDate = transaction.getRealizedDate();
     }
 
     public UUID getId() {
@@ -119,5 +126,21 @@ public class TransactionResponseDTO {
 
     public void setWallet(WalletDTO wallet) {
         this.wallet = wallet;
+    }
+
+    public Boolean getIsRealized() {
+        return isRealized;
+    }
+
+    public void setIsRealized(Boolean realized) {
+        isRealized = realized;
+    }
+
+    public LocalDate getRealizedDate() {
+        return realizedDate;
+    }
+
+    public void setRealizedDate(LocalDate realizedDate) {
+        this.realizedDate = realizedDate;
     }
 }

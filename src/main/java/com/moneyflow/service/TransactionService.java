@@ -31,17 +31,10 @@ public class TransactionService {
 
     @Transactional
     public TransactionResponseDTO insert(TransactionRequestDTO dto) {
-        Transaction transaction = new Transaction();
-        transaction.setDescription(dto.getDescription());
-        transaction.setAmount(dto.getAmount());
-        transaction.setTransactionDate(dto.getTransactionDate());
-        transaction.setType(dto.getType());
-        transaction.setCategoryIncome(dto.getCategoryIncome());
-        transaction.setCategoryExpense(dto.getCategoryExpense());
-        transaction.setObservation(dto.getObservation());
+        Transaction transaction = updateEntityFromDTO(new Transaction(), dto);
 
         if(!walletRepository.existsById(dto.getWalletId()))
-            throw new ResourceNotFoundException("Cartão com ID " +dto.getWalletId() + " não localizado!");
+            throw new ResourceNotFoundException("Carteira com ID " +dto.getWalletId() + " não localizado!");
 
         Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
         transaction.setWallet(wallet);
@@ -116,6 +109,14 @@ public class TransactionService {
         if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
 
         if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
+
+        if(dto.getIsRealized()){
+            transaction.setIsRealized(true);
+            transaction.setRealizedDate(dto.getRealizedDate());
+        }else{
+            transaction.setIsRealized(false);
+            transaction.setRealizedDate(null);
+        }
 
         return transaction;
     }
