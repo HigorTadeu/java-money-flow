@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +35,13 @@ public class WalletService {
     public Page<WalletResponseDTO> findAll(Pageable pageable){
         Page<Wallet> wallets = walletRepository.findAll(pageable);
         return  wallets.map(w -> new WalletResponseDTO(w));
+    }
+
+    @Transactional(readOnly = true)
+    public List<WalletResponseDTO> findByName(String name) {
+        List<Wallet> result = walletRepository.findByNameContainingIgnoreCase(name);
+
+        return result.stream().map(w -> new WalletResponseDTO(w)).toList();
     }
 
     @Transactional
@@ -61,6 +69,7 @@ public class WalletService {
         return new WalletResponseDTO(walletUpdated);
     }
 
+    @Transactional
     public void delete(UUID id){
         Optional<Wallet> result = walletRepository.findById(id);
         if(!result.isPresent()){
