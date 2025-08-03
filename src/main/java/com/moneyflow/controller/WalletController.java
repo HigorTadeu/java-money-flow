@@ -5,7 +5,6 @@ import com.moneyflow.dto.WalletResponseDTO;
 import com.moneyflow.repository.WalletRepository;
 import com.moneyflow.service.WalletService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +46,11 @@ public class WalletController {
     }
 
     @GetMapping("/w")
-    public ResponseEntity<List<WalletResponseDTO>> findByName(@RequestParam(name = "name", defaultValue = "") String name){
-        List<WalletResponseDTO> response = walletService.findByName(name);
+    public ResponseEntity<Page<WalletResponseDTO>> findByName(
+            @RequestParam(name = "name", defaultValue = "") String name,
+            Pageable pageable
+            ){
+        Page<WalletResponseDTO> response = walletService.findByName(name, pageable);
         return ResponseEntity.ok(response);
     }
 

@@ -38,10 +38,9 @@ public class WalletService {
     }
 
     @Transactional(readOnly = true)
-    public List<WalletResponseDTO> findByName(String name) {
-        List<Wallet> result = walletRepository.findByNameContainingIgnoreCase(name);
-
-        return result.stream().map(w -> new WalletResponseDTO(w)).toList();
+    public Page<WalletResponseDTO> findByName(String name, Pageable pageable) {
+        Page<Wallet> result = walletRepository.findByNameContainingIgnoreCase(name, pageable);
+        return result.map(w -> new WalletResponseDTO(w));
     }
 
     @Transactional
