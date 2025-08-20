@@ -1,5 +1,6 @@
 package com.moneyflow.config.security;
 
+import com.moneyflow.repository.RevokedTokenRepository;
 import com.moneyflow.repository.UserRepository;
 import com.moneyflow.service.TokenService;
 import jakarta.servlet.FilterChain;
@@ -24,14 +25,18 @@ public class SecurityFilter extends OncePerRequestFilter {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RevokedTokenRepository revokedTokenRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         var token = this.recoverToken(request);
-        if(token != null){
+        if(token != null && !revokedTokenRepository.existsByToken(token)){
             var login = tokenService.validateToken(token);
             UserDetails user = userRepository.findByLogin(login);
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication); //Adiciona o usuario autenticado no contexto da aplicacao
+
         }
         filterChain.doFilter(request, response); //Chama o próximo filtro para que seja executado
     }

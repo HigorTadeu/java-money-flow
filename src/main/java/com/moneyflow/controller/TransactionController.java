@@ -1,5 +1,6 @@
 package com.moneyflow.controller;
 
+import com.moneyflow.dto.TransactionFilterDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.service.TransactionService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,6 +33,23 @@ public class TransactionController {
     public ResponseEntity<TransactionResponseDTO> findById(@PathVariable UUID id){
         TransactionResponseDTO response = transactionService.findById(id);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/t")
+    public ResponseEntity<Page<TransactionResponseDTO>> findByDescription(
+            @RequestParam(name="description", defaultValue = "") String description,
+            Pageable pageable){
+        Page<TransactionResponseDTO> result = transactionService.findByDescription(description, pageable);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<TransactionResponseDTO>> findByFilter(
+            TransactionFilterDTO filter,
+            Pageable pageable
+    ){
+        Page<TransactionResponseDTO> result = transactionService.findByFilter(filter, pageable);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping

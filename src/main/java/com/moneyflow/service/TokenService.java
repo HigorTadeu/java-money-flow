@@ -2,9 +2,13 @@ package com.moneyflow.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.moneyflow.entity.RevokedToken;
 import com.moneyflow.entity.User;
+import com.moneyflow.repository.RevokedTokenRepository;
 import com.moneyflow.service.exception.JWTCreationException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,6 +21,9 @@ public class TokenService {
     @Value("${api.security.token.secret}")
     private String secret;
     private final String applicationName = "moneyFlow-api";
+
+    @Autowired
+    RevokedTokenRepository revokedTokenRepository;
 
     /**
      * Método responsável por gerar o Token
@@ -55,6 +62,15 @@ public class TokenService {
         } catch (JWTCreationException exception) {
             return "";
         }
+    }
+
+    public String revokedToken(String token){
+        if(validateToken(token) != ""){
+            revokedTokenRepository.save(new RevokedToken(token, LocalDateTime.now()));
+            SecurityContextHolder.clearContext(); //Limpa o contexto de segurança
+            return "Logout successfully";
+        }
+        return "Invalid token";
     }
 
     /**

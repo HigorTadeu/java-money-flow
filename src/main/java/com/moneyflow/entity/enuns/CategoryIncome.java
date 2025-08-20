@@ -6,5 +6,7 @@ public enum CategoryIncome {
     RENTAL,// aluguel
     GIFTS, // presente em dinheiro
     INVESTMENT, // investimento
-    INTEREST; // juros de investimentos
+    INTEREST, // juros de investimentos
+    BONUS, // bônus e extras
+    VACATION; // férias
 }

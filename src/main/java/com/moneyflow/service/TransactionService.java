@@ -1,5 +1,6 @@
 package com.moneyflow.service;
 
+import com.moneyflow.dto.TransactionFilterDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.entity.Transaction;
@@ -19,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class TransactionService {
@@ -50,6 +54,38 @@ public class TransactionService {
 
         return new TransactionResponseDTO(transaction);
     }
+
+    @Transactional(readOnly = true)
+    public Page<TransactionResponseDTO> findByDescription(String description, Pageable pageable) {
+        Page<Transaction> result = transactionRepository.findByDescriptionContainingIgnoreCase(description, pageable);
+        return result.map(t -> new TransactionResponseDTO(t));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TransactionResponseDTO> findByFilter(TransactionFilterDTO filter, Pageable pageable) {
+        if (!filter.hasFilter()) {
+            return findAll(pageable);
+        }
+
+        String typeString = filter.getType() != null ? filter.getType().name() : null;
+        String categoryIncomeString = filter.getCategoryIncome() != null ? filter.getCategoryIncome().name() : null;
+        String categoryExpenseString = filter.getCategoryExpense() != null ? filter.getCategoryExpense().name() : null;
+
+        Page<Transaction> result = transactionRepository.findByFilter(
+                filter.getDescription(),
+                filter.getMinAmount(),
+                filter.getMaxAmount(),
+                typeString,
+                categoryIncomeString,
+                categoryExpenseString,
+                filter.getTransactionStartDate(),
+                filter.getTransactionEndDate(),
+                filter.getIsRealized(),
+                pageable);
+
+        return result.map(t -> new TransactionResponseDTO(t));
+    }
+
     @Transactional(readOnly = true)
     public Page<TransactionResponseDTO> findAll(Pageable pageable) {
        Page<Transaction> transactions = transactionRepository.findAll(pageable);
@@ -116,6 +152,13 @@ public class TransactionService {
         }else{
             transaction.setIsRealized(false);
             transaction.setRealizedDate(null);
+        }
+
+        if(dto.getWalletId() != null && transaction.getWallet() != null){
+            if(dto.getWalletId() != transaction.getWallet().getId()){
+                Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
+                transaction.setWallet(wallet);
+            }
         }
 
         return transaction;
