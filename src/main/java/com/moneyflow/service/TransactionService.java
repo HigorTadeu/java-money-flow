@@ -1,10 +1,13 @@
 package com.moneyflow.service;
 
+import com.moneyflow.dto.TransactionFilterDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
 import com.moneyflow.entity.Transaction;
+import com.moneyflow.entity.Wallet;
 import com.moneyflow.entity.enuns.TransactionType;
 import com.moneyflow.repository.TransactionRepository;
+import com.moneyflow.repository.WalletRepository;
 import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import com.moneyflow.service.exception.ValidationException;
@@ -18,22 +21,27 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class TransactionService {
 
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Autowired
+    private WalletRepository walletRepository;
+
     @Transactional
     public TransactionResponseDTO insert(TransactionRequestDTO dto) {
-        Transaction transaction = new Transaction();
-        transaction.setDescription(dto.getDescription());
-        transaction.setAmount(dto.getAmount());
-        transaction.setTransactionDate(dto.getTransactionDate());
-        transaction.setType(dto.getType());
-        transaction.setCategoryIncome(dto.getCategoryIncome());
-        transaction.setCategoryExpense(dto.getCategoryExpense());
-        transaction.setObservation(dto.getObservation());
+        Transaction transaction = updateEntityFromDTO(new Transaction(), dto);
+
+        if(!walletRepository.existsById(dto.getWalletId()))
+            throw new ResourceNotFoundException("Carteira com ID " +dto.getWalletId() + " não localizado!");
+
+        Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
+        transaction.setWallet(wallet);
 
         transaction = transactionRepository.save(transaction);
         return new TransactionResponseDTO(transaction);
@@ -46,6 +54,38 @@ public class TransactionService {
 
         return new TransactionResponseDTO(transaction);
     }
+
+    @Transactional(readOnly = true)
+    public Page<TransactionResponseDTO> findByDescription(String description, Pageable pageable) {
+        Page<Transaction> result = transactionRepository.findByDescriptionContainingIgnoreCase(description, pageable);
+        return result.map(t -> new TransactionResponseDTO(t));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<TransactionResponseDTO> findByFilter(TransactionFilterDTO filter, Pageable pageable) {
+        if (!filter.hasFilter()) {
+            return findAll(pageable);
+        }
+
+        String typeString = filter.getType() != null ? filter.getType().name() : null;
+        String categoryIncomeString = filter.getCategoryIncome() != null ? filter.getCategoryIncome().name() : null;
+        String categoryExpenseString = filter.getCategoryExpense() != null ? filter.getCategoryExpense().name() : null;
+
+        Page<Transaction> result = transactionRepository.findByFilter(
+                filter.getDescription(),
+                filter.getMinAmount(),
+                filter.getMaxAmount(),
+                typeString,
+                categoryIncomeString,
+                categoryExpenseString,
+                filter.getTransactionStartDate(),
+                filter.getTransactionEndDate(),
+                filter.getIsRealized(),
+                pageable);
+
+        return result.map(t -> new TransactionResponseDTO(t));
+    }
+
     @Transactional(readOnly = true)
     public Page<TransactionResponseDTO> findAll(Pageable pageable) {
        Page<Transaction> transactions = transactionRepository.findAll(pageable);
@@ -75,27 +115,7 @@ public class TransactionService {
         return new TransactionResponseDTO(transactionUpdated);
     }
 
-    private Transaction updateEntityFromDTO(Transaction transaction, TransactionRequestDTO dto) {
-        if(dto.getDescription() != null) transaction.setDescription(dto.getDescription());
-        if(dto.getAmount() != null) transaction.setAmount(dto.getAmount());
-        if(dto.getTransactionDate() != null) transaction.setTransactionDate(dto.getTransactionDate());
-        if(dto.getType() != null) transaction.setType(dto.getType());
-
-        if(dto.getType() == TransactionType.EXPENSE)
-            transaction.setCategoryIncome(null);
-        else
-            if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
-
-        if(dto.getType() == TransactionType.INCOME)
-            transaction.setCategoryExpense(null);
-        else
-            if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
-
-        if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
-
-        return transaction;
-    }
-
+    @Transactional
     public void delete(UUID id) {
         if(!transactionRepository.findById(id).isPresent()){
             throw new ResourceNotFoundException("Transação não localizada!");
@@ -106,5 +126,41 @@ public class TransactionService {
             throw new DatabaseException("Falha na integridade referencial");
         }
 
+    }
+
+    private Transaction updateEntityFromDTO(Transaction transaction, TransactionRequestDTO dto) {
+        if(dto.getDescription() != null) transaction.setDescription(dto.getDescription());
+        if(dto.getAmount() != null) transaction.setAmount(dto.getAmount());
+        if(dto.getTransactionDate() != null) transaction.setTransactionDate(dto.getTransactionDate());
+        if(dto.getType() != null) transaction.setType(dto.getType());
+
+        if(dto.getType() == TransactionType.EXPENSE)
+            transaction.setCategoryIncome(null);
+        else
+        if(dto.getCategoryIncome() != null) transaction.setCategoryIncome(dto.getCategoryIncome());
+
+        if(dto.getType() == TransactionType.INCOME)
+            transaction.setCategoryExpense(null);
+        else
+        if(dto.getCategoryExpense() != null) transaction.setCategoryExpense(dto.getCategoryExpense());
+
+        if(dto.getObservation() != null) transaction.setObservation(dto.getObservation());
+
+        if(dto.getIsRealized()){
+            transaction.setIsRealized(true);
+            transaction.setRealizedDate(dto.getRealizedDate());
+        }else{
+            transaction.setIsRealized(false);
+            transaction.setRealizedDate(null);
+        }
+
+        if(dto.getWalletId() != null && transaction.getWallet() != null){
+            if(dto.getWalletId() != transaction.getWallet().getId()){
+                Wallet wallet = walletRepository.getReferenceById(dto.getWalletId());
+                transaction.setWallet(wallet);
+            }
+        }
+
+        return transaction;
     }
 }

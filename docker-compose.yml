@@ -1,0 +1,65 @@
+
+services:
+  # Banco de dados PostgreSQL
+  postgresdb:
+    image: postgres:17.5
+    container_name: moneyflow-postgres
+    environment:
+      POSTGRES_DB: ${DB_BASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - moneyflow-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_BASE}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mf-backend:${IMAGE_TAG}
+    container_name: mf-backend-${IMAGE_TAG}
+    environment:
+      # Variáveis do banco
+      DB_HOST: postgresdb
+      DB_PORT: 5432
+      DB_BASE: ${DB_BASE}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      
+      # Configurações JPA/Hibernate
+      DDL_AUTO: ${DDL_AUTO}
+      SHOW_SQL: ${SHOW_SQL}
+      
+      # Profile do Spring
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresdb:
+        condition: service_healthy
+    networks:
+      - moneyflow-network
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    name: moneyflow-pgdata
+
+networks:
+  moneyflow-network:
+    name: moneyflow-network
+    driver: bridge

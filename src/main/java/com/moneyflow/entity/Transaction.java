@@ -10,6 +10,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
@@ -43,6 +45,15 @@ public class Transaction {
     private CategoryExpense categoryExpense;
 
     private String observation;
+
+    @ManyToOne
+    @JoinColumn(name = "wallet_id", nullable = false)
+    private Wallet wallet;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private Boolean isRealized = false;
+
+    private LocalDate realizedDate;
 
     public UUID getId() {
         return id;
@@ -106,5 +117,29 @@ public class Transaction {
 
     public void setCategoryExpense(CategoryExpense categoryExpense) {
         this.categoryExpense = categoryExpense;
+    }
+
+    public Wallet getWallet() {
+        return wallet;
+    }
+
+    public void setWallet(Wallet wallet) {
+        this.wallet = wallet;
+    }
+
+    public Boolean getIsRealized() {
+        return isRealized;
+    }
+
+    public void setIsRealized(Boolean realized) {
+        isRealized = realized;
+    }
+
+    public LocalDate getRealizedDate() {
+        return realizedDate;
+    }
+
+    public void setRealizedDate(LocalDate realizedDate) {
+        this.realizedDate = realizedDate;
     }
 }

@@ -6,6 +6,7 @@ import com.moneyflow.entity.enuns.CategoryIncome;
 import com.moneyflow.entity.enuns.TransactionType;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,7 +26,14 @@ public class TransactionRequestDTO {
     private TransactionType type;
     private CategoryIncome categoryIncome;
     private CategoryExpense categoryExpense;
+    @Size(max = 255, message = "Max length 255 characters")
     private String observation;
+    @NotNull(message = "Wallet is required")
+    private UUID walletId;
+    @NotNull(message = "É obrigatório informar se foi Realizado ou Não")
+    private Boolean isRealized;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate realizedDate;
 
     public TransactionRequestDTO() { }
 
@@ -91,5 +99,29 @@ public class TransactionRequestDTO {
 
     public void setObservation(String observation) {
         this.observation = observation;
+    }
+
+    public UUID getWalletId() {
+        return walletId;
+    }
+
+    public void setWalletId(UUID walletId) {
+        this.walletId = walletId;
+    }
+
+    public Boolean getIsRealized() {
+        return isRealized;
+    }
+
+    public void setIsRealized(Boolean realized) {
+        isRealized = realized;
+    }
+
+    public LocalDate getRealizedDate() {
+        return realizedDate;
+    }
+
+    public void setRealizedDate(LocalDate realizedDate) {
+        this.realizedDate = realizedDate;
     }
 }

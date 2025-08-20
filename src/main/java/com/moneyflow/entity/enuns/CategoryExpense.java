@@ -7,5 +7,6 @@ public enum CategoryExpense {
     HEALTH,
     EDUCATION,
     ENTERTAINMENT,
+    PERSONAL, // despesas pessoais
     OTHER;
 }

@@ -2,6 +2,7 @@ package com.moneyflow.controller;
 
 import com.moneyflow.dto.AuthenticationDTO;
 import com.moneyflow.dto.LoginResponseDTO;
+import com.moneyflow.dto.LogoutRequestDTO;
 import com.moneyflow.dto.RegisterRequestDTO;
 import com.moneyflow.entity.User;
 import com.moneyflow.repository.UserRepository;
@@ -37,15 +38,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody LogoutRequestDTO dto){
+        var result = tokenService.revokedToken(dto.token());
+        return ResponseEntity.ok(result);
+    }
+
     @PostMapping("/register")
     public ResponseEntity register(@RequestBody @Valid RegisterRequestDTO data){
         if(this.repository.findByLogin(data.login()) != null) return ResponseEntity.badRequest().build();
 
-        //Cria a senha Encriptada
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());
         User newUser = new User(data.name(), data.email(), data.login(), encryptedPassword, data.role(), data.status());
-
-        //Salva o usuário no banco
         this.repository.save(newUser);
 
         return ResponseEntity.ok().build();
