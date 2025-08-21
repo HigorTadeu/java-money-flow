@@ -1,5 +1,7 @@
 package com.moneyflow.controller;
 
+import com.moneyflow.dto.TransactionDashFilterDTO;
+import com.moneyflow.dto.TransactionDashResponseDTO;
 import com.moneyflow.dto.TransactionFilterDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
@@ -50,6 +52,12 @@ public class TransactionController {
     ){
         Page<TransactionResponseDTO> result = transactionService.findByFilter(filter, pageable);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/dash")
+    public ResponseEntity<TransactionDashResponseDTO> getTransactionInfoDash(TransactionDashFilterDTO dto){
+        TransactionDashResponseDTO response = transactionService.getTransactionInfoDash(dto);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
