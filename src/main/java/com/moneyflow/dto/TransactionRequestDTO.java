@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.moneyflow.entity.enuns.CategoryExpense;
 import com.moneyflow.entity.enuns.CategoryIncome;
 import com.moneyflow.entity.enuns.TransactionType;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -18,6 +19,7 @@ public class TransactionRequestDTO {
     private String description;
     @NotNull(message = "Amount is required")
     @Positive(message = "Value must be greater than zero")
+    @DecimalMin(value = "0.01")
     private BigDecimal amount;
     @NotNull(message = "Transaction date is required")
     @JsonFormat(pattern = "yyyy-MM-dd")

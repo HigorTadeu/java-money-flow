@@ -1,5 +1,7 @@
 package com.moneyflow.service;
 
+import com.moneyflow.dto.TransactionDashFilterDTO;
+import com.moneyflow.dto.TransactionDashResponseDTO;
 import com.moneyflow.dto.TransactionFilterDTO;
 import com.moneyflow.dto.TransactionRequestDTO;
 import com.moneyflow.dto.TransactionResponseDTO;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -84,6 +87,38 @@ public class TransactionService {
                 pageable);
 
         return result.map(t -> new TransactionResponseDTO(t));
+    }
+
+    @Transactional(readOnly = true)
+    public TransactionDashResponseDTO getTransactionInfoDash(TransactionDashFilterDTO dto) {
+        TransactionDashResponseDTO result =  transactionRepository.findTransactionInfoDash(dto.getTransactionStartDate(),dto.getTransactionEndDate());
+        TransactionDashResponseDTO dash = new TransactionDashResponseDTO();
+
+        if(result.getTotalIncome() == null){
+            dash.setTotalIncome(BigDecimal.ZERO);
+        }else{
+            dash.setTotalIncome(result.getTotalIncome());
+        }
+
+        if(result.getTotalExpense() == null){
+            dash.setTotalExpense(BigDecimal.ZERO);
+        }else{
+            dash.setTotalExpense(result.getTotalExpense());
+        }
+
+        if(result.getTotalIncomeRealized() == null){
+            dash.setTotalIncomeRealized(BigDecimal.ZERO);
+        }else{
+            dash.setTotalIncomeRealized(result.getTotalIncomeRealized());
+        }
+
+        if(result.getTotalExpenseRealized()== null){
+            dash.setTotalExpenseRealized(BigDecimal.ZERO);
+        }else{
+            dash.setTotalExpenseRealized(result.getTotalExpenseRealized());
+        }
+
+        return dash;
     }
 
     @Transactional(readOnly = true)
