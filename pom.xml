@@ -119,6 +119,13 @@
 			<version>3.0.0</version>
 		</dependency>
 
+		<!-- Parse OFX -->
+		<dependency>
+			<groupId>com.webcohesion.ofx4j</groupId>
+			<artifactId>ofx4j</artifactId>
+			<version>1.34</version>
+		</dependency>
+
 		<!-- Security Validation -->
 
 		<dependency>
