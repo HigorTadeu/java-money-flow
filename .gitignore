@@ -67,12 +67,8 @@ mvnw.cmd
 *.p12
 *.pem
 *.key
-/src/main/resources/google/
 
 # Arquivos temporários
 *~
 *.swp
 *.swo
-
-# Carga Inicial
-src/main/resources/*.sql
