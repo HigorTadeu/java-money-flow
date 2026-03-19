@@ -53,19 +53,10 @@ public class GoogleConnection {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    private Sheets getSheetsService() throws  IOException, GeneralSecurityException {
+    public Sheets getSheetsService() throws  IOException, GeneralSecurityException {
         NetHttpTransport transport = GoogleNetHttpTransport.newTrustedTransport();
         return new Sheets.Builder(transport, JSON_FACTORY, autorize(transport))
                 .setApplicationName(applicatinName)
                 .build();
-    }
-
-    public List<List<Object>> lerPlanilha(String spreadsheetId, String range) throws IOException, GeneralSecurityException {
-        ValueRange response = getSheetsService()
-                .spreadsheets().values()
-                .get(spreadsheetId, range)
-                .execute();
-        List<List<Object>> values = response.getValues();
-        return values != null ? values : List.of();
     }
 }
