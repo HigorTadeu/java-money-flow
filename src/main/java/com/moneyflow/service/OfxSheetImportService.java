@@ -162,7 +162,7 @@ public class OfxSheetImportService {
         linha.set(1, retornarMesFormatado(tx.transactionDate().getMonthValue()));
         linha.set(COL_DATA, tx.transactionDate().format(BR_FORMT));
         linha.set(3,tx.memo());
-        linha.set(7,"Débito");
+        linha.set(7,validarFormaPagtoTransacao(tx.memo(), tx.transactionType()));
         linha.set(9, banco);
         linha.set(COL_VALOR,normalizaValorAmount(tx.transactionAmount()));
         linha.set(11, "Sim");
@@ -226,5 +226,20 @@ public class OfxSheetImportService {
         //Torna sempre positivo
         BigDecimal positiveAmount = amount.abs();
         return positiveAmount.toPlainString().replace('.',',');
+    }
+
+    /**
+     * Método para validar retornar a forma de pagamento correta de acordo com o tipo de pagamento e memo
+     * Para o banco Caixa Economica o Memo ENVIO PIX referencia o envio de um PIX os demais deverao ser considerados como Débito
+     * @param memo Informacao enviada pelo Banco da descrição da transacao
+     * @param type Tipo de transação DEBIT ou CREDIT
+     * @return
+     */
+    private String validarFormaPagtoTransacao(String memo, OfxType type){
+        String forma = "";
+        if(type == OfxType.DEBIT){
+            forma = memo.equals("ENVIO PIX") ? "Pix" : "Débito";
+        }
+        return forma;
     }
 }
