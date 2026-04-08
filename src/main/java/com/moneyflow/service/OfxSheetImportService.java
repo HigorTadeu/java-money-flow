@@ -12,9 +12,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.security.GeneralSecurityException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.format.DecimalStyle;
 import java.util.*;
 
 @Service
@@ -156,6 +159,7 @@ public class OfxSheetImportService {
         linha.set(1, retornarMesFormatado(tx.transactionDate().getMonthValue()));
         linha.set(COL_DATA, tx.transactionDate().format(BR_FORMT));
         linha.set(3,tx.memo());
+        linha.set(7,"Débito");
         linha.set(9, banco);
         linha.set(COL_VALOR,normalizaValorAmount(tx.transactionAmount()));
         linha.set(11, "Sim");
@@ -175,7 +179,7 @@ public class OfxSheetImportService {
                 tx.fitId(),
                 tx.transactionDate().format(BR_FORMT),
                 tx.memo(),
-                tx.transactionAmount().toPlainString(),
+                normalizaValorAmount(tx.transactionAmount()),
                 tx.transactionType().name(),
                 linhas
         );
@@ -206,14 +210,18 @@ public class OfxSheetImportService {
     }
 
     /**
-     * Método para retornar valor retirado do arquivo OFX com valor positivo independente se for crédito ou débito
-     * @param amount
+     * Método para normalizar o valor Amount do OFX
+     * 1. Deixar valor positivo sempre positivo independente de ser DEBIT ou CREDIT
+     * 2. Formatar para padrão Brasileito de moeada retirando o ponto e colocar a vírgula como casa decimal
+     * @param amount Formatado
      * @return
      */
     private String normalizaValorAmount(BigDecimal amount){
-        if(amount.compareTo(BigDecimal.ZERO) < 0){
-            return amount.multiply(BigDecimal.valueOf(-1)).toPlainString();
+        if(amount == null){
+            return "0,00";
         }
-        return amount.toPlainString();
+        //Torna sempre positivo
+        BigDecimal positiveAmount = amount.abs();
+        return positiveAmount.toPlainString().replace('.',',');
     }
 }
