@@ -157,15 +157,17 @@ public class OfxSheetImportService {
     // -------------------------------------------------------------------------
 
     private List<Object> montarLinhaInsercao(OfxTransactionDTO tx, String banco){
+        String dataTransacaoFormatada = tx.transactionDate().format(BR_FORMT);
         List<Object> linha = new ArrayList<>(Collections.nCopies(18, ""));
         linha.set(0, tx.transactionDate().getYear());
         linha.set(1, retornarMesFormatado(tx.transactionDate().getMonthValue()));
-        linha.set(COL_DATA, tx.transactionDate().format(BR_FORMT));
+        linha.set(COL_DATA,dataTransacaoFormatada);
         linha.set(3,tx.memo());
         linha.set(7,validarFormaPagtoTransacao(tx.memo(), tx.transactionType()));
-        linha.set(9, banco);
+        linha.set(8, banco);
         linha.set(COL_VALOR,normalizaValorAmount(tx.transactionAmount()));
         linha.set(11, "Sim");
+        linha.set(12,dataTransacaoFormatada);
         linha.set(15, "Sim");
         linha.set(COL_FITID, tx.fitId());
 
