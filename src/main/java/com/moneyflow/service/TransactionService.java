@@ -1,5 +1,6 @@
 package com.moneyflow.service;
 
+import com.moneyflow.config.google.GoogleConnection;
 import com.moneyflow.dto.TransactionDashFilterDTO;
 import com.moneyflow.dto.TransactionDashResponseDTO;
 import com.moneyflow.dto.TransactionFilterDTO;
@@ -14,13 +15,18 @@ import com.moneyflow.service.exception.DatabaseException;
 import com.moneyflow.service.exception.ResourceNotFoundException;
 import com.moneyflow.service.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +35,15 @@ import org.slf4j.LoggerFactory;
 
 @Service
 public class TransactionService {
+
+    private GoogleService googleService;
+
+    TransactionService(GoogleService googleService){
+        this.googleService = googleService;
+    }
+
+    @Value("${SHEET_IMPORT}")
+    private String idSheet;
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -161,6 +176,28 @@ public class TransactionService {
             throw new DatabaseException("Falha na integridade referencial");
         }
 
+    }
+
+    public void importDataOfxFile(String aba, String range){
+        String completeRange = aba + "!" + range;
+
+        try{
+            List<List<Object>> fullSheet = googleService.readSheet(idSheet, completeRange);
+            List<List<Object>> filteredSheed = googleService.filterDatePeriod(fullSheet, LocalDate.of(2026,02,01),LocalDate.of(2026,02,28));
+            if (filteredSheed != null && !filteredSheed.isEmpty()){
+                int contY = 0;
+                for(int i = 0; i < filteredSheed.size(); i++){
+                    for(int y = 0; y < filteredSheed.get(i).size(); y++){
+                        System.out.print(filteredSheed.get(i).get(y) + " | ");
+                    }
+                    System.out.println("");
+                }
+            }
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Transaction updateEntityFromDTO(Transaction transaction, TransactionRequestDTO dto) {
