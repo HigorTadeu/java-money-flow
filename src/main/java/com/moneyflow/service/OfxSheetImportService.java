@@ -2,6 +2,7 @@ package com.moneyflow.service;
 
 import com.moneyflow.dto.OfxImportResultDTO;
 import com.moneyflow.dto.OfxTransactionDTO;
+import com.moneyflow.entity.enuns.OfxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,20 +71,22 @@ public class OfxSheetImportService {
 
             // 5. Classifica cada transação OFX
             for (OfxTransactionDTO tx: transactions){
-                if(fitIdsExisted.contains(tx.fitId())){
-                    duplicadas++;
-                    continue;
+                if(tx.transactionType() == OfxType.DEBIT){
+                    if(fitIdsExisted.contains(tx.fitId())){
+                        duplicadas++;
+                        continue;
+                    }
+
+                    String chave = chaveDataValor(tx.transactionDate(), tx.transactionAmount());
+                    List<Integer> conflitos = indiceDataValor.getOrDefault(chave,List.of());
+
+                    if(!conflitos.isEmpty()){
+                        linhasValidacao.add(montarLinhaValidacao(tx,bank,conflitos));
+                        continue;
+                    }
+
+                    linhasInserir.add(montarLinhaInsercao(tx,bank));
                 }
-
-                String chave = chaveDataValor(tx.transactionDate(), tx.transactionAmount());
-                List<Integer> conflitos = indiceDataValor.getOrDefault(chave,List.of());
-
-                if(!conflitos.isEmpty()){
-                    linhasValidacao.add(montarLinhaValidacao(tx,bank,conflitos));
-                    continue;
-                }
-
-                linhasInserir.add(montarLinhaInsercao(tx,bank));
             }
 
             // 6. Persiste em batch - uma chamada para aba
